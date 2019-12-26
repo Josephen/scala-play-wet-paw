@@ -20,6 +20,7 @@ import slick.jdbc.MySQLProfile.api._
 
 
 
+
 class UserTable(tag: Tag) extends Table[User](tag, "users") {
   def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
   def email = column[String]("email", O.Unique)
@@ -42,19 +43,22 @@ class UserRepository @Inject() (protected val dbConfigProvider: DatabaseConfigPr
                                ) extends HasDatabaseConfigProvider[JdbcProfile] {
   val users = TableQuery[UserTable]
   val loginU = TableQuery[LoginTable]
+
   def listAll: Future[Seq[User]] ={
     db.run(users.result)
   }
 
   def register(email: String, username: String, password: String): Future[Option[String]] =
-    db.run(users.filter(_.email === email).result.headOption).flatMap {
-      case None => db.run{
-        val hashedPassword = getHashedPassword(password)
-        users += User(0, email, username, hashedPassword)}
-        .map(_=> Some("User successfully registered"))
+      db.run(users.filter(_.email === email).result.headOption).flatMap {
+        case None => db.run {
+          val hashedPassword = getHashedPassword(password)
+          users += User(0, email, username, hashedPassword)
+        }
+          .map(_ => Some("User successfully registered"))
 
-      case _ => Future(None)
-    }
+        case _ => Future(None)
+      }
+
 
   def read (username: String): Future[User] =
     db.run(users.filter(_.username === username).result.head)
@@ -84,4 +88,5 @@ class UserRepository @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     val salt = BCrypt.gensalt()
     BCrypt.hashpw(password, salt)
   }
+
 }

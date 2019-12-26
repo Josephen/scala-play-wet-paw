@@ -10,7 +10,6 @@ GET     /users/:username                controllers.UserController.getUser(usern
 POST    /users                          controllers.UserController.signUp
 POST    /users/login                    controllers.UserController.signIn
 
-
 GET     /articles                       controllers.ArticleController.listApprovedArticles
 GET     /articles/:username             controllers.ArticleController.listArticlesByUsername(username: String)
 PUT     /articles/:id                   controllers.ArticleController.updateArticle(id: Long)

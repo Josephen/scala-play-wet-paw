@@ -9,6 +9,7 @@ import play.api.mvc._
 import services.{ArticleService, UserService}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.matching.Regex
 
 class UserController @Inject () (
                                          userService: UserService,
@@ -37,11 +38,13 @@ class UserController @Inject () (
         Future.successful(Ok(s"Form submission with error: ${errorForm}"))
       },
       data => {
+        //if (validateEmail(data.email))
         userService.addUser(data.email, data.username, data.password )
           .map {
             case Some(msg) => Ok(Json.obj("status" -> "OK", "msg" -> msg))
             case _ => BadRequest(Json.obj("status" -> "FAIL", "msg" -> "email or username already exists"))
           }
+        //else Future.successful(BadRequest(Json.obj("status" -> "FAIL", "msg" -> "Incorrect email form")))
       }
     )
   }
@@ -63,6 +66,11 @@ class UserController @Inject () (
   def getUser(username: String) = Action.async { _ =>
     userService.getUser(username).map (res =>
       Ok(s"${res.username}, ${res.email}"))
+  }
+
+  private def validateEmail(email: String): Boolean = {
+    val reg: Regex = """(?=[^\s]+)(?=(\w+)@([\w\.]+))""".r
+    reg.pattern.matcher(email).matches()
   }
 
 }
