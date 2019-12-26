@@ -79,5 +79,11 @@ class AdminController @Inject () (
       Ok(Json.toJson(articles.reverse))
     }
   }
+
+  def listUnApprovedArticles = Action.async { implicit request =>
+    articleService.findApprovedArticles(false).map { articles =>
+      Ok(Json.toJson(articles.reverse))
+    }
+  }
 }
 

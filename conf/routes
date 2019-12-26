@@ -18,7 +18,8 @@ DELETE  /articles/:id                   controllers.ArticleController.deleteArti
 GET     /articles/post/:id              controllers.ArticleController.getArticle(id: Long)
 GET     /articles/category/:category    controllers.ArticleController.listArticlesByCategoryAndApproved(category: String)
 
-GET     /admin/articles                 controllers.AdminController.listArticles
+GET     /admin/articles                 controllers.AdminController.listUnApprovedArticles
+GET     /admin/allarticles              controllers.AdminController.listArticles
 DELETE  /admin/articles/delete/:id      controllers.AdminController.canDeleteAllArticle(id: Long)
 DELETE  /admin/users/delete/:id         controllers.AdminController.deleteUser(id: Long)
 GET     /admin/articles/approve/:id     controllers.AdminController.approveArticle(id: Long)
