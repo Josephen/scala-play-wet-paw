@@ -34,8 +34,8 @@ class ArticleService @Inject() (articles: ArticleRepository) {
     articles.delete(id)
   }
 
-  def updateArticle(id: Long, address: String, author: String, sex: Boolean, description: String, contacts: String, image: String, category: String): Future[Option[String]] =
-    articles.update(id, address, author, sex, description, contacts, image, category)
+  def updateArticle(id: Long, address: String, author: String, sex: Boolean, description: String, contacts: String, image: String, approved: Boolean, category: String): Future[Option[String]] =
+    articles.update(id, address, author, sex, description, contacts, image, approved, category)
 
   def getArticle(id: Long): Future[Article] = {
     articles.getArticle(id)

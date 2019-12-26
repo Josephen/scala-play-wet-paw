@@ -44,15 +44,15 @@ class ArticleRepository @Inject() (protected val dbConfigProvider: DatabaseConfi
 
   def create (address: String, author: String, sex: Boolean, description: String, contacts: String, image: String, category: String): Future[Option[String]] = {
     db.run(
-      articles += Article(0, address, author, sex, description, contacts, image,category))
+      articles += Article(0, address, author, sex, description, contacts, image, category))
       .map (_ => Some("Post created"))
   }
 
-  def update (id: Long, address: String, author: String, sex: Boolean, description: String, contacts: String, image: String, category: String): Future[Option[String]] = {
+  def update (id: Long, address: String, author: String, sex: Boolean, description: String, contacts: String, image: String, approved: Boolean, category: String): Future[Option[String]] = {
     db.run(
       articles.filter(_.id === id)
-      .map (p => (p.address, p.author, p.sex, p.description, p.contacts, p.image, p.category))
-      .update(address, author, sex, description, contacts, image, category)
+      .map (p => (p.address, p.author, p.sex, p.description, p.contacts, p.image, p.approved, p.category))
+      .update(address, author, sex, description, contacts, image, approved, category)
     )
       .map (_ => Some("Post Updated"))
   }

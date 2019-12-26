@@ -110,7 +110,7 @@ class ArticleController @Inject() (
               Future.successful(Ok(s"Form submission with error: ${errorForm}"))
             },
             data => {
-              articleService.updateArticle(id, data.address, username, data.sex, data.description, data.contacts, data.image, data.category)
+              articleService.updateArticle(id, data.address, username, data.sex, data.description, data.contacts, data.image, false, data.category)
                 .map {
                   case Some(msg) => Ok(Json.obj("status" -> "OK", "msg" -> msg))
                   case _ => BadRequest(Json.obj("status" -> "FAIL", "msg" -> "cant update"))
