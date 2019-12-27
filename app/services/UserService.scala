@@ -1,15 +1,15 @@
 package services
 
 import com.google.inject.Inject
-import models.User
+import models.{AdminUserTable, User}
 import repositories.UserRepository
 
 import scala.concurrent.Future
 
 class UserService @Inject() (users: UserRepository) {
 
-  def listAll: Future[Seq[User]] = {
-    users.listAll
+  def listAll: Future[Seq[AdminUserTable]] = {
+    users.listAllUsers
   }
 
   def getUser(username: String): Future[User] = {
@@ -20,8 +20,8 @@ class UserService @Inject() (users: UserRepository) {
     users.register(email, username, password)
 
 
-  def deleteUser(id: Long): Future[Option[String]] =
-    users.delete(id)
+  def deleteUser(username: String): Future[Option[String]] =
+    users.delete(username)
 
   def authenticate(username: String, password: String): Future[Option[String]] =
     users.authenticate(username, password)

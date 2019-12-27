@@ -8,10 +8,9 @@ import com.google.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.data.Forms._
-import models.User
+import models.{AdminUserTable, LoginUser, User}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import models.LoginUser
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,16 +36,23 @@ class LoginTable(tag: Tag) extends Table[LoginUser](tag, "users") {
   def password = column[String]("password")
   override def * = (username, password) <> ((LoginUser.apply _).tupled, LoginUser.unapply)
 }
+
+class AdminTable(tag: Tag) extends Table[AdminUserTable](tag, "users") {
+  def email = column[String]("email", O.Unique)
+  def username = column[String]("username", O.Unique)
+  override def * = (email, username) <> ((AdminUserTable.apply _).tupled, AdminUserTable.unapply)
+}
+
 class UserRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
                                )(
                                  implicit executionContext: ExecutionContext
                                ) extends HasDatabaseConfigProvider[JdbcProfile] {
   val users = TableQuery[UserTable]
   val loginU = TableQuery[LoginTable]
+  val adminU = TableQuery[AdminTable]
 
-  def listAll: Future[Seq[User]] ={
-    db.run(users.result)
-  }
+  def listAllUsers: Future[Seq[AdminUserTable]] =
+    db.run(adminU.result)
 
   def register(email: String, username: String, password: String): Future[Option[String]] =
       db.run(users.filter(_.email === email).result.headOption).flatMap {
@@ -76,11 +82,11 @@ class UserRepository @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     }
   }
 
-  def delete (id: Long): Future[Option[String]] =
-    db.run(users.filter(_.id === id).result.headOption).flatMap
+  def delete (username: String): Future[Option[String]] =
+    db.run(users.filter(_.username === username).result.headOption).flatMap
     {
       case None => Future(None)
-      case _ => db.run(users.filter(_.id === id).delete)
+      case _ => db.run(users.filter(_.username === username).delete)
         .map(_=> Some("User deleted"))
     }
 

@@ -38,13 +38,13 @@ class UserController @Inject () (
         Future.successful(Ok(s"Form submission with error: ${errorForm}"))
       },
       data => {
-        //if (validateEmail(data.email))
+        if (validateEmail(data.email))
         userService.addUser(data.email, data.username, data.password )
           .map {
             case Some(msg) => Ok(Json.obj("status" -> "OK", "msg" -> msg))
             case _ => BadRequest(Json.obj("status" -> "FAIL", "msg" -> "email or username already exists"))
           }
-        //else Future.successful(BadRequest(Json.obj("status" -> "FAIL", "msg" -> "Incorrect email form")))
+        else Future.successful(BadRequest(Json.obj("status" -> "FAIL", "msg" -> "Incorrect email form")))
       }
     )
   }
@@ -68,10 +68,10 @@ class UserController @Inject () (
       Ok(s"${res.username}, ${res.email}"))
   }
 
-  private def validateEmail(email: String): Boolean = {
-    val reg: Regex = """(?=[^\s]+)(?=(\w+)@([\w\.]+))""".r
-    reg.pattern.matcher(email).matches()
-  }
+  private def validateEmail(email: String): Boolean =
+    if("""(?=[^\s]+)(?=(\w+)@([\w\.]+))""".r.findFirstIn(email) == None)false else true
+
+
 
 }
 case class UserFormData(email : String, username : String, password : String)

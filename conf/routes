@@ -21,8 +21,9 @@ GET     /articles/category/:category    controllers.ArticleController.listArticl
 GET     /admin/articles                 controllers.AdminController.listUnApprovedArticles
 GET     /admin/allarticles              controllers.AdminController.listArticles
 DELETE  /admin/articles/delete/:id      controllers.AdminController.canDeleteAllArticle(id: Long)
-DELETE  /admin/users/delete/:id         controllers.AdminController.deleteUser(id: Long)
+DELETE  /admin/users/delete/:username   controllers.AdminController.deleteUser(username: String)
 GET     /admin/articles/approve/:id     controllers.AdminController.approveArticle(id: Long)
 GET     /admin/articles/:category       controllers.AdminController.listArticlesByCategory(category: String)
+GET     /admin/users                    controllers.AdminController.listUsers
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
